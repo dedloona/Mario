@@ -1,21 +1,17 @@
 from pico2d import *
+import mario_player
+import time
 
 
 
-canvas_Width = 500
-canvas_Height = 412
+canvas_Width = 512
+canvas_Height = 400
+s_time = time.time()
+e_time = time.time()
 
 
 
-def handle_events():
-    global running
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
-            running = False
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
-    pass
+
 
 class Grass1:
     def __init__(self):
@@ -23,7 +19,7 @@ class Grass1:
         self.x, self.y = 16,16
 
     def draw_grass1(self):
-        self.grass1.draw(self.x,self.y)
+        self.grass.draw(self.x,self.y)
 
 
 class Grass2:
@@ -31,47 +27,63 @@ class Grass2:
         self.image = load_image('grass2.png')
         self.x, self.y = 16, 16
 
-    def draw_grass2(self):
-        self.image.draw(self.x, self.y)
+    def draw_grass2(self,x ,y):
+        self.image.draw(x, y)
 
 
 class BG:
-    def __init__(self):
+    def __init__(self,x,y):
         self.image = load_image('BG.png')
+        self.x = x
+        self.y = y
     def draw(self):
-        self.image.draw()
+        self.image.draw(self.x,self.y)
 
 
-class Mario:
-    def __init__(self):
-        self.image_idle = load_image('mario_idle.png')
-        self.image_walk = load_image('walk_animaiton.png')
-        self.image_jump = load_image('mario_jump.png')
-        self.x, self.y = 0,72
-        self.frame = 3
 
-    def idle(self):
-        self.image_idle.draw(400, 72)
+
 
 
 open_canvas(canvas_Width, canvas_Height)
 
 # prepare images
 
-mario = Mario()
-grass2 =
+mario = mario_player.Mario()
+
+bg1 = BG(canvas_Width/2-canvas_Width,canvas_Height/2)
+bg2 = BG(canvas_Width/2,canvas_Height/2)
+bg3 = BG((canvas_Width/2)+canvas_Width,canvas_Height/2)
+grasses = [Grass2() for i in range(1, 32+1)]
+
 running = True
 
-
-
-
+current_time = time.time()
 
 while running:
 
-    handle_events()
+    frame_time = time.time() - current_time
+    current_time += frame_time
+
+    mario.update(frame_time)
     clear_canvas()
-    mario.idle()
-    gras
+
+    # if mario.x == canvas_Width:
+    #     del (bg1)
+    # elif mario.x == 0:
+    #     del (bg3)
+    bg1.draw()
+    bg2.draw()
+    bg3.draw()
+
+    mario.draw()
+
+
+    i = 0
+
+    for grass in grasses:
+        grass.draw_grass2(8+i*16,8)
+        i += 1
+
 
 
     update_canvas()
