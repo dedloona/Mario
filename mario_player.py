@@ -42,14 +42,6 @@ class Mario:
         self.state_walk = walk
         self.state_jump = jump
 
-    def get_state_idle(self):
-        return self.state_idle
-
-    def get_state_walk(self):
-        return self.state_walk
-
-    def get_state_jump(self):
-        return self.state_jump
 
     def idle(self):
         if self.look == 1:
