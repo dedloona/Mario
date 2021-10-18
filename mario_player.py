@@ -37,11 +37,6 @@ class Mario:
         self.x += x
         self.y += y
 
-    def set_state(self,idle,walk,jump):
-        self.state_idle = idle
-        self.state_walk = walk
-        self.state_jump = jump
-
 
     def idle(self):
         if self.look == 1:
