@@ -51,14 +51,6 @@ class Mario:
         elif self.look == -1:
             self.image_walk.clip_composite_draw(self.frame * 16, 0, 16, 29, self.rad * 4, 'h', self.x, self.y, 16, 29)
 
-    def jump(self):
-        self.jump_time += 0.0001
-        if self.look == 1:
-            self.image_jump.composite_draw(self.rad*4,'None',self.x,self.y )
-        elif self.look == -1:
-            self.image_jump.composite_draw(self.rad * 4, 'h', self.x, self.y)
-        # self.drop += self.gravity
-
     def draw(self):
         if self.get_state_jump():
             self.jump()
