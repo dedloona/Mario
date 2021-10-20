@@ -23,11 +23,10 @@ class Mario:
         self.frame = 0
         self.look = 1
         self.rad = 1.5708
-        self.vel = 0.0
         self.gravity = 9.8
         self.drop = 0
         self.dir = 0
-        self.power = 10
+        self.power = 2.5
         self.jump_time = 0
         self.state_jump = False
         self.state_idle = True
@@ -74,7 +73,7 @@ class Mario:
         self.x += self.dir
         self.handle_events()
         if self.state_jump:
-            self.height = (self.jump_time * 2.5) - (self.jump_time ** 2 * self.gravity / 2)
+            self.height = (self.jump_time * self.power) - (self.jump_time ** 2 * self.gravity / 2)
             self.set_addpos(0,self.height)
             print(self.height)
             self.jump_time += frame_time
