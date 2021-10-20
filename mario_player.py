@@ -60,11 +60,11 @@ class Mario:
         # self.drop += self.gravity
 
     def draw(self):
-        if self.get_state_jump():
+        if self.state_jump:
             self.jump()
-        elif self.get_state_walk():
+        elif self.state_walk:
             self.walk()
-        elif self.get_state_idle():
+        elif self.state_idle:
             self.idle()
 
     def update(self,frame_time):
