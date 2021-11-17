@@ -1,15 +1,26 @@
 from pico2d import *
-
-RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, SLEEP_TIMER, SPACE = range(6)
+import game_framework
+RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, JUMP = range(5)
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RIGHT_DOWN,
     (SDL_KEYDOWN, SDLK_LEFT): LEFT_DOWN,
     (SDL_KEYUP, SDLK_RIGHT): RIGHT_UP,
     (SDL_KEYUP, SDLK_LEFT): LEFT_UP,
-    (SDL_KEYDOWN, SDLK_SPACE): SPACE
+    (SDL_KEYDOWN, SDLK_SPACE): JUMP
 }
 
+# Boy Run Speed
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+# Boy Action Speed
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
 
 class IdleState:
 
@@ -25,7 +36,7 @@ class IdleState:
         mario.timer = 1000
 
     def exit(boy, event):
-        if event == SPACE:
+        if event == JUMP:
             boy.fire_ball()
         pass
 
@@ -33,7 +44,7 @@ class IdleState:
         mario.frame = (mario.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         mario.timer -= 1
         if mario.timer == 0:
-            mario.add_event(SLEEP_TIMER)
+           pass
 
     def draw(mario):
         if mario.dir == 1:
@@ -55,7 +66,7 @@ class RunState:
         mario.dir = clamp(-1, mario.velocity, 1)
 
     def exit(mario, event):
-        if event == SPACE:
+        if event == JUMP:
             mario.fire_ball()
 
     def do(mario):
@@ -74,7 +85,27 @@ class RunState:
 class JumpState:
 
     def enter(mario, event):
-        mario.frame = 0
+        mario.total_frames += Mario.FRAMES_PER_ACTION * Mario.ACTION_PER_TIME * game_framework.frame_time
+
+        mario.x += mario.dir
+        mario.handle_events()
+        if mario.state_jump:
+            mario.height = (mario.jump_time * mario.power) - (mario.jump_time ** 2 * mario.gravity / 2)
+            mario.set_addpos(0, mario.height)
+            print(mario.height)
+            mario.jump_time += game_framework.frame_time
+            mario.drop += mario.gravity * game_framework.frame_time
+
+            # 중력
+        if mario.height < 0:
+            if mario.y <= 28:
+                mario.y = 28
+                mario.drop = 0
+                mario.state_jump = False
+                mario.jump_time = 0
+
+            # print(self.dropSpeed)
+        mario.y += mario.drop * game_framework.frame_time
 
     def exit(mario, event):
         pass
@@ -84,17 +115,17 @@ class JumpState:
 
     def draw(mario):
         if mario.dir == 1:
-            mario.image.clip_composite_draw(int(boy.frame) * 100, 300, 100, 100, 3.141592 / 2, '', mario.x - 25, mario.y - 25, 100, 100)
+            mario.image.clip_composite_draw(int(mario.frame) * 100, 300, 100, 100, 3.141592 / 2, '', mario.x - 25, mario.y - 25, 100, 100)
         else:
-            mario.image.clip_composite_draw(int(boy.frame) * 100, 200, 100, 100, -3.141592 / 2, '', mario.x + 25, mario.y - 25, 100, 100)
+            mario.image.clip_composite_draw(int(mario.frame) * 100, 200, 100, 100, -3.141592 / 2, '', mario.x + 25, mario.y - 25, 100, 100)
 
 
 
 
 next_state_table = {
-    IdleState: {RIGHT_UP: RunState, LEFT_UP: RunState, RIGHT_DOWN: RunState, LEFT_DOWN: RunState, SLEEP_TIMER: SleepState, SPACE: IdleState},
-    RunState: {RIGHT_UP: IdleState, LEFT_UP: IdleState, LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, SPACE: RunState},
-    JumpState: {LEFT_DOWN: RunState, RIGHT_DOWN: RunState, LEFT_UP: RunState, RIGHT_UP: RunState, SPACE: IdleState}
+    IdleState: {RIGHT_UP: RunState, LEFT_UP: RunState, RIGHT_DOWN: RunState, LEFT_DOWN: RunState, JUMP: IdleState},
+    RunState: {RIGHT_UP: IdleState, LEFT_UP: IdleState, LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, JUMP: RunState},
+    JumpState: {LEFT_DOWN: RunState, RIGHT_DOWN: RunState, LEFT_UP: RunState, RIGHT_UP: RunState, JUMP: IdleState}
 }
 class Mario:
 
@@ -169,58 +200,10 @@ class Mario:
             self.cur_state = next_state_table[self.cur_state][event]
             self.cur_state.enter(self, event)
 
-        self.total_frames += Mario.FRAMES_PER_ACTION * Mario.ACTION_PER_TIME * frame_time
-
-        self.x += self.dir
-        self.handle_events()
-        if self.state_jump:
-            self.height = (self.jump_time * self.power) - (self.jump_time ** 2 * self.gravity / 2)
-            self.set_addpos(0,self.height)
-            print(self.height)
-            self.jump_time += frame_time
-            self.drop += self.gravity * frame_time
-
-            # 중력
-        if self.height < 0:
-            if self.y  <= 28:
-                self.y = 28
-                self.drop = 0
-                self.state_jump = False
-                self.jump_time = 0
-
-            # print(self.dropSpeed)
-        self.y += self.drop * frame_time
 
 
-    def handle_events(self):
 
-        events = get_events()
-        for event in events:
-            # if event.type == SDL_QUIT:
-            #     running = False
-            # elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            #     # running = False
-            # 좌우 이동
-            if event.type == SDL_KEYDOWN:
-                if event.key == SDLK_a:
-                    self.look = -1
-                    self.dir = -0.5
-                    self.state_walk = True
-                elif event.key == SDLK_d:
-                    self.look = 1
-                    self.dir = 0.5
-                    self.state_walk = True
-                elif event.key == SDLK_j:
-
-                    self.state_jump = True
-                    self.drop = self.power
-
-            elif event.type == SDL_KEYUP:
-                if event.key == SDLK_a:
-                    self.state_idle = True
-                    self.state_walk = False
-                    self.dir = 0
-                if event.key == SDLK_d:
-                    self.state_idle = True
-                    self.state_walk = False
-                    self.dir = 0
+    def handle_events(self,event):
+        if (event.type, event.key) in key_event_table:
+            key_event = key_event_table[(event.type, event.key)]
+            self.add_event(key_event)
