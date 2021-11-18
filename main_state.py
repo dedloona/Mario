@@ -11,14 +11,14 @@ from BG import BackGround
 
 name = "MainState"
 
-boy = None
+mario = None
 
 def enter():
     global boy
-    mario = Mario()
+    # mario = Mario()
     bg = BackGround()
-    game_world.add_object(mario, 1)
-    game_world.all_object(bg,0)
+    # game_world.add_object(mario, 1)
+    game_world.add_object(bg,0)
 
 
 def exit():
@@ -40,8 +40,8 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
                 game_framework.quit()
         else:
-            boy.handle_event(event)
-
+            # mario.handle_event(event)
+            pass
 
 def update():
     for game_object in game_world.all_objects():

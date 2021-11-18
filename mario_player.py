@@ -129,17 +129,6 @@ next_state_table = {
 }
 class Mario:
 
-    PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-    RUN_SPEED_KMPH = 20.0  # Km / Hour
-    RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
-    RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
-    RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
-
-    TIME_PER_ACTION = 0.1
-    ACTION_PER_TIME = 0.3 / TIME_PER_ACTION
-    FRAMES_PER_ACTION = 4
-    total_frames = 0.0
-
     def __init__(self):
         self.image_idle = load_image('mario_idle.png')
         self.image_walk = load_image('walk_animaiton.png')
@@ -154,9 +143,9 @@ class Mario:
         self.dir = 0
         self.power = 2.5
         self.jump_time = 0
-        self.state_jump = False
-        self.state_idle = True
-        self.state_walk = False
+        self.event_que = []
+        self.cur_state = IdleState
+        self.cur_state.enter(self, None)
 
     def set_addpos(self, x, y):
         self.x += x
