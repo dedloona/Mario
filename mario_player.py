@@ -48,9 +48,10 @@ class IdleState:
 
     def draw(mario):
         if mario.dir == 1:
-            mario.image.clip_draw(int(mario.frame) * 100, 300, 100, 100, mario.x, mario.y)
+            mario.image_idle.composite_draw(mario.rad * 4, 'None', mario.x, mario.y, 16, 29)
+
         else:
-            mario.image.clip_draw(int(mario.frame) * 100, 200, 100, 100, mario.x, mario.y)
+            mario.image_idle.composite_draw(mario.rad * 4, 'h', mario.x, mario.y, 16, 29)
 
 class RunState:
 
@@ -77,9 +78,9 @@ class RunState:
 
     def draw(mario):
         if mario.dir == 1:
-            mario.image.clip_draw(int(mario.frame) * 100, 100, 100, 100, mario.x, mario.y)
+            mario.image_walk.clip_composite_draw(mario.frame * 16, 0, 16, 29, mario.rad * 4, 'None', mario.x, mario.y, 16, 29)
         else:
-            mario.image.clip_draw(int(mario.frame) * 100, 0, 100, 100, mario.x, mario.y)
+            mario.image_walk.clip_composite_draw(mario.frame * 16, 0, 16, 29, mario.rad * 4, 'h', mario.x, mario.y, 16, 29)
 
 
 class JumpState:
@@ -114,10 +115,11 @@ class JumpState:
         mario.frame = (mario.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
 
     def draw(mario):
+        mario.jump_time += 0.0001
         if mario.dir == 1:
-            mario.image.clip_composite_draw(int(mario.frame) * 100, 300, 100, 100, 3.141592 / 2, '', mario.x - 25, mario.y - 25, 100, 100)
-        else:
-            mario.image.clip_composite_draw(int(mario.frame) * 100, 200, 100, 100, -3.141592 / 2, '', mario.x + 25, mario.y - 25, 100, 100)
+            mario.image_jump.composite_draw(mario.rad * 4, 'None', mario.x, mario.y)
+        elif mario.look == -1:
+            mario.image_jump.composite_draw(mario.rad * 4, 'h', mario.x, mario.y)
 
 
 
@@ -131,10 +133,10 @@ class Mario:
 
     def __init__(self):
         self.image_idle = load_image('mario_idle.png')
-        self.image_walk = load_image('walk_animaiton.png')
+        self.image_walk = load_image('walk_animation.png')
         self.image_jump = load_image('mario_jump.png')
         self.x, self.y = 16,28
-        self.widht, self.height = 16,0
+        self.width, self.height = 16, 0
         self.frame = 0
         self.look = 1
         self.rad = 1.5708
@@ -173,13 +175,6 @@ class Mario:
             self.image_jump.composite_draw(self.rad * 4, 'h', self.x, self.y)
         # self.drop += self.gravity
 
-    def draw(self):
-        if self.state_jump:
-            self.jump()
-        elif self.state_walk:
-            self.walk()
-        elif self.state_idle:
-            self.idle()
 
     def update(self):
         self.cur_state.do(self)
