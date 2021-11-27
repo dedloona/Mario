@@ -12,12 +12,14 @@ from BG import BackGround
 name = "MainState"
 
 mario = None
-
+bg = []
 def enter():
-    global boy
-    # mario = Mario()
+    global mario
+    mario = Mario()
+    game_world.add_object(mario, 1)
+
+    global bg
     bg = BackGround()
-    # game_world.add_object(mario, 1)
     game_world.add_object(bg,0)
 
 
