@@ -9,7 +9,7 @@ class BackGround:
 
     def __init__(self):
         if BackGround.image == None:
-            self.image = load_image('BG.png')
+            self.image = load_image('Resources/used/BG/BG.png')
         self.x = width//2
         self.y = height//2
     def update(self):

@@ -135,9 +135,9 @@ next_state_table = {
 class Mario:
 
     def __init__(self):
-        self.image_idle = load_image('mario_idle.png')
-        self.image_walk = load_image('walk_animation.png')
-        self.image_jump = load_image('mario_jump.png')
+        self.image_idle = load_image('Resources/used/marioes/mario_idle.png')
+        self.image_walk = load_image('Resources/used/marioes/walk_animation.png')
+        self.image_jump = load_image('Resources/used/marioes/mario_jump.png')
         self.x, self.y = 16, 28
         self.width, self.height = 16, 0
         self.frame = 0
