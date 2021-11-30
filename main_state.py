@@ -9,14 +9,14 @@ import game_world
 from mario_player import Mario
 from BG import BackGround
 from grass import Grass
-import stage1
+from stage1 import stage1
 
 name = "MainState"
 
 mario = None
 bg = []
 grass = None
-stage =
+stage = stage1
 
 def enter():
     global mario
@@ -28,8 +28,16 @@ def enter():
     game_world.add_object(bg, 0)
 
     global grass
-    grass = Grass()
-    game_world.add_object(grass, 0)
+
+    global stage1
+
+    for i in range(12):
+        for j in range(200):
+            print(stage1[i][j])
+            if stage[i][j] == 1:
+                grass = Grass(16*(j-1)+16,16)
+                print(j)
+                game_world.add_object(grass, 1)
 
 
 

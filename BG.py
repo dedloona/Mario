@@ -1,7 +1,7 @@
 from pico2d import *
 
-height = 400
-width = 512
+height = 480
+width = 1028
 
 class BackGround:
 
@@ -16,4 +16,4 @@ class BackGround:
         pass
     def draw(self):
         for i in range(8):
-            self.image.draw((self.x+height*i),self.y)
+            self.image.draw((self.x+width*i),self.y,1028,480)

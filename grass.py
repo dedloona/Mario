@@ -1,15 +1,20 @@
 from pico2d import *
 
 class Grass:
-    def __init__(self):
-        self.image = load_image('Resources/used/tiles/grass2.png')
+    image = None
+    def __init__(self, x, y):
+        if Grass.image == None:
+            self.image = load_image('Resources/used/tiles/grass2.png')
+        self.x = x
+        self.y = y
+        self.size = 32
+
 
     def update(self):
         pass
 
     def draw(self):
-        self.image.draw(400, 30)
-        self.image.draw(200, 30)
+        self.image.draw((self.x)+self.size, self.y,32,32)
 
 
     def get_bb(self):
