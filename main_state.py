@@ -18,6 +18,7 @@ bg = []
 grass = None
 stage = stage1
 
+
 def enter():
     global mario
     mario = Mario()
@@ -29,17 +30,15 @@ def enter():
 
     global grass
 
-    global stage1
-
-    for i in range(12):
+    global stage
+    for i in range(16):
         for j in range(200):
-            print(stage1[i][j])
             if stage[i][j] == 1:
-                grass = Grass(16*(j-1)+16,16)
-                print(j)
+                # if j == 0:
+                    # grass = Grass(8, 8)
+                grass = Grass(j * 16 + 8, 8)
+                print(grass.x)
                 game_world.add_object(grass, 1)
-
-
 
 
 def exit():
