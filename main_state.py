@@ -10,35 +10,42 @@ from mario_player import Mario
 from BG import BackGround
 from grass import Grass
 from stage1 import stage1
+from tiles import *
+import server
 
 name = "MainState"
 
-mario = None
-bg = []
-grass = None
-stage = stage1
+
 
 
 def enter():
-    global mario
-    mario = Mario()
-    game_world.add_object(mario, 1)
 
-    global bg
-    bg = BackGround()
-    game_world.add_object(bg, 0)
+    server.mario = Mario()
+    game_world.add_object(server.mario, 1)
 
-    global grass
+    server.bg = BackGround()
+    game_world.add_object(server.bg, 0)
 
-    global stage
+    server.stage = stage1
+
     for i in range(16):
         for j in range(200):
-            if stage[i][j] == 1:
-                # if j == 0:
-                    # grass = Grass(8, 8)
-                grass = Grass(j * 16 + 8, 8)
-                print(grass.x)
+            if server.stage[i][j] == 1:
+                grass = Grass(j * 16 + 8, i * 16 + 8)
+                print(grass.x, grass.y)
                 game_world.add_object(grass, 1)
+            if server.stage[i][j] == 4:
+                pipes = Pipe1(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(pipes, 1)
+            if server.stage[i][j] == 5:
+                pipes = Pipe2(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(pipes, 1)
+            if server.stage[i][j] == 6:
+                pipes = Pipe3(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(pipes, 1)
+            if server.stage[i][j] == 7:
+                pipes = Pipe4(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(pipes, 1)
 
 
 def exit():
@@ -66,8 +73,12 @@ def handle_events():
 
 
 def update():
+
     for game_object in game_world.all_objects():
         game_object.update()
+
+    if server.mario.x >=
+
 
 
 def draw():

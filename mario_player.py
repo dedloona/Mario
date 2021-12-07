@@ -1,7 +1,8 @@
 from pico2d import *
 import game_framework
+import server
 
-RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, JUMP, FIRE = range(6)
+RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, JUMP, SPACE = range(6)
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RIGHT_DOWN,
@@ -9,7 +10,7 @@ key_event_table = {
     (SDL_KEYUP, SDLK_RIGHT): RIGHT_UP,
     (SDL_KEYUP, SDLK_LEFT): LEFT_UP,
     (SDL_KEYDOWN, SDLK_SPACE): JUMP,
-    (SDL_KEYDOWN, SDLK_j): FIRE
+    (SDL_KEYDOWN, SDLK_j): SPACE
 
 }
 
@@ -26,34 +27,34 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
 
-class IdleState:
-
-    def enter(mario, event):
-        if event == RIGHT_DOWN:
-            mario.velocity += RUN_SPEED_PPS
-        elif event == LEFT_DOWN:
-            mario.velocity -= RUN_SPEED_PPS
-        elif event == RIGHT_UP:
-            mario.velocity -= RUN_SPEED_PPS
-        elif event == LEFT_UP:
-            mario.velocity += RUN_SPEED_PPS
-
-    def exit(mario, event):
-        if mario == FIRE:
-            mario.fire_ball()
-        pass
-
-    def do(mario):
-        mario.frame = (mario.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
-        # mario.timer -= 1
-        # if mario.timer == 0:
-        #     pass
-
-    def draw(mario):
-        if mario.dir == 1:
-            mario.image_idle.composite_draw(mario.rad * 4, 'None', mario.x, mario.y, 16, 29)
-        else:
-            mario.image_idle.composite_draw(mario.rad * 4, 'h', mario.x, mario.y, 16, 29)
+# class IdleState:
+#
+#     def enter(mario, event):
+#         if event == RIGHT_DOWN:
+#             mario.velocity += RUN_SPEED_PPS
+#         elif event == LEFT_DOWN:
+#             mario.velocity -= RUN_SPEED_PPS
+#         elif event == RIGHT_UP:
+#             mario.velocity -= RUN_SPEED_PPS
+#         elif event == LEFT_UP:
+#             mario.velocity += RUN_SPEED_PPS
+#
+#     def exit(mario, event):
+#         if mario == FIRE:
+#             mario.fire_ball()
+#         pass
+#
+#     def do(mario):
+#         mario.frame = (mario.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+#         # mario.timer -= 1
+#         # if mario.timer == 0:
+#         #     pass
+#
+#     def draw(mario):
+#         if mario.dir == 1:
+#             mario.image_idle.composite_draw(mario.rad * 4, 'None', mario.x, mario.y, 16, 29)
+#         else:
+#             mario.image_idle.composite_draw(mario.rad * 4, 'h', mario.x, mario.y, 16, 29)
 
 
 class RunState:
@@ -80,10 +81,48 @@ class RunState:
         mario.x = clamp(25, mario.x, 1600 - 25)
 
     def draw(mario):
-        if mario.dir == 1:
-            mario.image_walk.clip_composite_draw(mario.frame * 16, 0, 16, 29, mario.rad * 4, 'None', mario.x, mario.y, 16, 29)
+
+        # cx, cy = mario.x - server.background.window_left, mario.y - server.background.window_bottom
+        if mario.velocity > 0:
+            mario.image_walk.clip_composite_draw(int(mario.frame * 16), 0, 16, 29, mario.rad * 4, 'None', mario.x, mario.y, 16, 29)
+            mario.dir = 1
+        elif mario.velocity < 0 :
+            mario.image_walk.clip_composite_draw(int(mario.frame * 16), 0, 16, 29, mario.rad * 4, 'h', mario.x, mario.y, 16, 29)
+
         else:
-            mario.image_walk.clip_composite_draw(mario.frame * 16, 0, 16, 29, mario.rad * 4, 'h', mario.x, mario.y, 16, 29)
+    #  velocity == 0
+            if mario.dir == 1:
+                mario.image_idle.composite_draw(mario.rad * 4, 'None', mario.x, mario.y, 16, 29)
+            else:
+                mario.image_idle.composite_draw(mario.rad * 4, 'None', mario.x, mario.y, 16, 29)
+
+
+
+
+    # def draw(boy):
+    #     cx, cy = boy.x - server.background.window_left, boy.y - server.background.window_bottom
+    #
+    #     if boy.x_velocity > 0:
+    #         boy.image.clip_draw(int(boy.frame) * 100, 100, 100, 100, cx, cy)
+    #         boy.dir = 1
+    #
+    #     elif boy.x_velocity < 0:
+    #         boy.image.clip_draw(int(boy.frame) * 100, 0, 100, 100, cx, cy)
+    #         boy.dir = -1
+    #
+    #     else:
+    #         # if boy x_velocity == 0
+    #         if boy.y_velocity > 0 or boy.y_velocity < 0:
+    #             if boy.dir == 1:
+    #                 boy.image.clip_draw(int(boy.frame) * 100, 100, 100, 100, cx, cy)
+    #             else:
+    #                 boy.image.clip_draw(int(boy.frame) * 100, 0, 100, 100, cx, cy)
+    #         else:
+    #             # boy is idle
+    #             if boy.dir == 1:
+    #                 boy.image.clip_draw(int(boy.frame) * 100, 300, 100, 100, cx, cy)
+    #             else:
+    #                 boy.image.clip_draw(int(boy.frame) * 100, 200, 100, 100, cx, cy)
 
 
 class JumpState:
@@ -91,43 +130,43 @@ class JumpState:
     def enter(mario, event):
         # mario.total_frames += Mario.FRAMES_PER_ACTION * Mario.ACTION_PER_TIME * game_framework.frame_time
         pass
-#         mario.x += mario.dir
-#         mario.handle_events()
-#         if mario.state_jump:
-#             mario.height = (mario.jump_time * mario.power) - (mario.jump_time ** 2 * mario.gravity / 2)
-#             mario.set_addpos(0, mario.height)
-#             print(mario.height)
-#             mario.jump_time += game_framework.frame_time
-#             mario.drop += mario.gravity * game_framework.frame_time
-#
-#             # 중력
-#         if mario.height < 0:
-#             if mario.y <= 28:
-#                 mario.y = 28
-#                 mario.drop = 0
-#                 mario.state_jump = False
-#                 mario.jump_time = 0
-#
-#             # print(self.dropSpeed)
-#         mario.y += mario.drop * game_framework.frame_time
-#
-#     def exit(mario, event):
-#         pass
-#
-#     def do(mario):
-#         mario.frame = (mario.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
-#
-#     def draw(mario):
-#         mario.jump_time += 0.0001
-#         if mario.dir == 1:
-#             mario.image_jump.composite_draw(mario.rad * 4, 'None', mario.x, mario.y)
-#         elif mario.look == -1:
-#             mario.image_jump.composite_draw(mario.rad * 4, 'h', mario.x, mario.y)
+        mario.x += mario.dir
+        mario.handle_events()
+        if mario.state_jump:
+            mario.height = (mario.jump_time * mario.power) - (mario.jump_time ** 2 * mario.gravity / 2)
+            mario.set_addpos(0, mario.height)
+            print(mario.height)
+            mario.jump_time += game_framework.frame_time
+            mario.drop += mario.gravity * game_framework.frame_time
+
+            # 중력
+        if mario.height < 0:
+            if mario.y <= 28:
+                mario.y = 28
+                mario.drop = 0
+                mario.state_jump = False
+                mario.jump_time = 0
+
+            # print(self.dropSpeed)
+        mario.y += mario.drop * game_framework.frame_time
+
+    def exit(mario, event):
+        pass
+
+    def do(mario):
+        mario.frame = (mario.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+
+    def draw(mario):
+        mario.jump_time += 0.0001
+        if mario.dir == 1:
+            mario.image_jump.composite_draw(mario.rad * 4, 'None', mario.x, mario.y)
+        elif mario.look == -1:
+            mario.image_jump.composite_draw(mario.rad * 4, 'h', mario.x, mario.y)
 
 
 next_state_table = {
-    IdleState: {RIGHT_UP: RunState, LEFT_UP: RunState, RIGHT_DOWN: RunState, LEFT_DOWN: RunState, JUMP: JumpState},
-    RunState: {RIGHT_UP: IdleState, LEFT_UP: IdleState, LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, JUMP: JumpState},
+
+    RunState: {RIGHT_UP: RunState, LEFT_UP: RunState, LEFT_DOWN: RunState, RIGHT_DOWN: RunState, JUMP: JumpState},
     JumpState: {LEFT_DOWN: RunState, RIGHT_DOWN: RunState, LEFT_UP: RunState, RIGHT_UP: RunState, JUMP: JumpState}
 }
 
@@ -146,32 +185,36 @@ class Mario:
         self.gravity = 9.8
         self.drop = 0
         self.dir = 0
+        self.velocity = 0
         self.power = 2.5
         self.jump_time = 0
         self.event_que = []
-        self.cur_state = IdleState
+        self.cur_state = RunState
         self.cur_state.enter(self, None)
 
     def idle(self):
-        if self.look == 1:
+        if self.dir == 1:
             self.image_idle.composite_draw(self.rad * 4, 'None', self.x, self.y, 16, 29)
-        elif self.look == -1:
+        elif self.dir == -1:
             self.image_idle.composite_draw(self.rad * 4, 'h', self.x, self.y, 16, 29)
 
     def walk(self):
         self.frame = (self.frame + 1) % 3
-        if self.look == 1:
+        if self.dir == 1:
             self.image_walk.clip_composite_draw(self.frame * 16, 0, 16, 29, self.rad * 4, 'None', self.x, self.y, 16, 29)
-        elif self.look == -1:
+        elif self.dir == -1:
             self.image_walk.clip_composite_draw(self.frame * 16, 0, 16, 29, self.rad * 4, 'h', self.x, self.y, 16, 29)
 
     def jump(self):
         self.jump_time += 0.0001
-        if self.look == 1:
+        if self.dir == 1:
             self.image_jump.composite_draw(self.rad * 4, 'None', self.x, self.y)
-        elif self.look == -1:
+        elif self.dir == -1:
             self.image_jump.composite_draw(self.rad * 4, 'h', self.x, self.y)
         # self.drop += self.gravity
+
+    def add_event(self, event):
+        self.event_que.insert(0, event)
 
     def update(self):
         self.cur_state.do(self)
