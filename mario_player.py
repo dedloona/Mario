@@ -206,7 +206,7 @@ class Mario:
             self.cur_state.enter(self, event)
 
         if server.mario.x >= 1000 // 2:
-            server.grass.x += -(self.velocity * game_framework.frame_time)
+            server.tiles.x += -(self.velocity * game_framework.frame_time)
             server.bg.x += -(self.velocity * game_framework.frame_time)
 
     def draw(self):

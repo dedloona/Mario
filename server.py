@@ -1,4 +1,4 @@
 mario = None
 bg = None
-tiles = None
+tiles = [[],[]]
 stage = None

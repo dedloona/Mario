@@ -34,21 +34,20 @@ def enter():
     for i in range(16):
         for j in range(200):
             if server.stage[i][j] == 1:
-                grass = Grass(j * 16 + 8, i * 16 + 8)
-                print(grass.x, grass.y)
-                game_world.add_object(grass, 1)
+                server.tiles = Grass(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(server.tiles, 1)
             if server.stage[i][j] == 4:
-                pipes = Pipe1(j * 16 + 8, i * 16 + 8)
-                game_world.add_object(pipes, 1)
+                server.tiles = Pipe1(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(server.tiles, 1)
             if server.stage[i][j] == 5:
-                pipes = Pipe2(j * 16 + 8, i * 16 + 8)
-                game_world.add_object(pipes, 1)
+                server.tiles = Pipe2(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(server.tiles, 1)
             if server.stage[i][j] == 6:
-                pipes = Pipe3(j * 16 + 8, i * 16 + 8)
-                game_world.add_object(pipes, 1)
+                server.tiles = Pipe3(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(server.tiles, 1)
             if server.stage[i][j] == 7:
-                pipes = Pipe4(j * 16 + 8, i * 16 + 8)
-                game_world.add_object(pipes, 1)
+                server.tiles = Pipe4(j * 16 + 8, i * 16 + 8)
+                game_world.add_object(server.tiles, 1)
 
 
 
