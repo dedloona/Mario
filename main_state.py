@@ -8,10 +8,10 @@ import game_world
 
 from mario_player import Mario
 from BG import BackGround
-from grass import Grass
+from tile import *
 from stage1 import stage1
-from tiles import *
 import server
+from collision import collide
 
 name = "MainState"
 
@@ -27,6 +27,9 @@ def enter():
     game_world.add_object(server.bg, 0)
 
     server.stage = stage1
+
+    # server.tiles = [[Tiles() for x in range (200)] for y in range (16)]
+    # game_world.add_objects(server.tiles, 1)
 
     for i in range(16):
         for j in range(200):
@@ -46,6 +49,7 @@ def enter():
             if server.stage[i][j] == 7:
                 pipes = Pipe4(j * 16 + 8, i * 16 + 8)
                 game_world.add_object(pipes, 1)
+
 
 
 def exit():
@@ -68,7 +72,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         else:
-            # mario.handle_event(event)
+            server.mario.handle_event(event)
             pass
 
 
@@ -77,7 +81,10 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update()
 
-    if server.mario.x >=
+
+
+
+
 
 
 

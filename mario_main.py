@@ -1,4 +1,6 @@
 from pico2d import *
+
+import dasd
 import mario_player
 import time
 
@@ -24,7 +26,7 @@ class Grass1:
 
 class Grass2:
     def __init__(self):
-        self.image = load_image('grass2.png')
+        self.image = load_image('Resources/used/tiles/grass2.png')
         self.x, self.y = 16, 16
 
     def draw_grass2(self,x ,y):
@@ -33,7 +35,7 @@ class Grass2:
 
 class BG:
     def __init__(self,x,y):
-        self.image = load_image('BG.png')
+        self.image = load_image('Resources/used/BG/BG.png')
         self.x = x
         self.y = y
     def draw(self):
@@ -48,7 +50,7 @@ open_canvas(canvas_Width, canvas_Height)
 
 # prepare images
 
-mario = mario_player.Mario()
+mario = dasd.Mario()
 
 bg1 = BG(canvas_Width/2-canvas_Width,canvas_Height/2)
 bg2 = BG(canvas_Width/2,canvas_Height/2)
@@ -93,7 +95,6 @@ while running:
 
 
 close_canvas()
-
 
 
 

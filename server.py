@@ -1,5 +1,4 @@
 mario = None
-bg = []
-grass = None
+bg = None
+tiles = None
 stage = None
-pipes = []
