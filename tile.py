@@ -48,6 +48,7 @@ class Pipe1:
         self.x = x
         self.y = y
         self.size = 16
+        self.top = self.y + 8
         self.left = self.x - 8
 
     def update(self):
@@ -69,7 +70,7 @@ class Pipe2:
         self.x = x
         self.y = y
         self.size = 16
-
+        self.top = self.y + 8
         self.right = self.x + 8
 
     def update(self):

@@ -19,7 +19,7 @@ key_event_table = {
 
 # Boy Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 100.0  # Km / Hour
+RUN_SPEED_KMPH = 20.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -125,7 +125,7 @@ class JumpState:
 
     def exit(mario, event):
 
-        if collide(mario, server.grass):
+        if collide(mario, server.tiles):
             event = TO_RUN
 
     def do(mario):
@@ -137,11 +137,14 @@ class JumpState:
         mario.height = (mario.jump_time * mario.power) - (mario.jump_time ** 2 * mario.gravity / 2)
         mario.y += mario.height + (mario.drop * game_framework.frame_time)
 
-        # if mario.height < 0:
-        #     if mario.y <= 28:
-        #         mario.y = 28
-        #         mario.drop = 0
-        #         mario.jump_time = 0
+        if mario.height < 0:
+            if mario.y <= 28:
+                mario.y = 28
+                mario.drop = 0
+                mario.jump_time = 0
+                mario.add_event(TO_RUN)
+        if mario.x >= 570:
+            mario.x = clamp(525 , mario.x ,575)
 
 
 
@@ -208,6 +211,13 @@ class Mario:
         if server.mario.x >= 1000 // 2:
             server.tiles.x += -(self.velocity * game_framework.frame_time)
             server.bg.x += -(self.velocity * game_framework.frame_time)
+
+        if self.height <0:
+            if collide(self, server.tiles):
+                self.y = server.tiles.top
+                self.drop = 0
+
+        print(self.height)
 
     def draw(self):
         self.cur_state.draw(self)

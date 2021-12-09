@@ -12,6 +12,7 @@ from tile import *
 from stage1 import stage1
 import server
 from collision import collide
+from monster import Gumba
 
 name = "MainState"
 
@@ -20,34 +21,36 @@ name = "MainState"
 
 def enter():
 
-    server.mario = Mario()
-    game_world.add_object(server.mario, 1)
-
     server.bg = BackGround()
     game_world.add_object(server.bg, 0)
 
-    server.stage = stage1
+    server.gumba = Gumba(300, 24)
+    game_world.add_object(server.gumba, 1)
 
-    # server.tiles = [[Tiles() for x in range (200)] for y in range (16)]
-    # game_world.add_objects(server.tiles, 1)
+    server.stage = stage1
+    server.mario = Mario()
+    game_world.add_object(server.mario, 1)
 
     for i in range(16):
         for j in range(200):
             if server.stage[i][j] == 1:
-                server.tiles = Grass(j * 16 + 8, i * 16 + 8)
+                server.tiles = Grass((j * 16 + 8) - server.mario.velocity, 256 - i * 16 - 8)
                 game_world.add_object(server.tiles, 1)
             if server.stage[i][j] == 4:
-                server.tiles = Pipe1(j * 16 + 8, i * 16 + 8)
+                server.tiles = Pipe1(j * 16 + 8, 256 - i * 16 - 8)
                 game_world.add_object(server.tiles, 1)
             if server.stage[i][j] == 5:
-                server.tiles = Pipe2(j * 16 + 8, i * 16 + 8)
+                server.tiles = Pipe2(j * 16 + 8, 256 - i * 16 - 8)
                 game_world.add_object(server.tiles, 1)
             if server.stage[i][j] == 6:
-                server.tiles = Pipe3(j * 16 + 8, i * 16 + 8)
+                server.tiles = Pipe3(j * 16 + 8, 256 - i * 16 - 8)
                 game_world.add_object(server.tiles, 1)
             if server.stage[i][j] == 7:
-                server.tiles = Pipe4(j * 16 + 8, i * 16 + 8)
+                server.tiles = Pipe4(j * 16 + 8, 256 - i * 16 - 8)
                 game_world.add_object(server.tiles, 1)
+
+
+
 
 
 
@@ -64,6 +67,7 @@ def resume():
 
 
 def handle_events():
+
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:

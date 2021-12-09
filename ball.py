@@ -31,7 +31,7 @@ class Ball:
         self.right = self.x + 4
 
     def draw(self):
-        print('ball')
+        # print('ball')
         self.image.clip_draw(int(self.frame) * 8, 0, 8, 8, self.x, self.y)
 
     def do(self):
